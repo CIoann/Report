@@ -1,0 +1,612 @@
+\documentclass[notheorems]{beamer}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{eurosym}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{rotating}
+\usepackage{microtype}
+\usepackage{indentfirst}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{varwidth}
+\usepackage{upgreek}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+
+\AtBeginSection{\frame{\sectionpage}}
+
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{ %
+  basicstyle=\footnotesize,           % the size of the fonts that are used for the code
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it's 1, each line 
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{white},      % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  %frame=single,                   % adds a frame around the code
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here))
+  tabsize=2,                      % sets default tabsize to 2 spaces
+  captionpos=t,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+  title=\lstname,                   % show the filename of files included with \lstinputlisting;
+}
+
+%\usepackage[a4paper,margin=1cm,landscape]{geometry}
+
+\setbeamertemplate{frametitle continuation}{(\insertcontinuationcount)}
+\setbeamertemplate{theorem}[ams style]
+\setbeamertemplate{theorems}[numbered]
+\setbeamertemplate{caption}[numbered]
+\newtheorem{rules}{Rule}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+
+\newcounter{bibcounter}
+\newcommand{\biblabel}[1]{\refstepcounter{bibcounter} \label{#1}}
+
+\setbeamerfont{caption}{size=\scriptsize}
+\title[]{A Time-Composable Operating System for the Patmos Processor}
+\author[Marco Ziccardi]{Marco Ziccardi \\
+\texttt{marco.ziccard@gmail.com}}
+\date[\today]{\today}
+\institute[]{\includegraphics[scale=.7]{figures/DTU-logo.pdf}}
+\usetheme{CambridgeUS}
+\setbeamercovered{dynamic}
+
+\setbeamercolor{item projected}{fg=white,bg=red}
+
+\begin{document}
+
+\begin{frame}
+\maketitle
+\end{frame}
+\begin{frame}
+\frametitle{Table of contents}
+\tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{comment}
+\begin{frame}
+\frametitle{Real-time Systems}
+\begin{block}{}
+A Real-Time System (RTS) receives inputs and sends outputs to the hardware, working under strict constraints on its response time~\cite{Ben:2006:PCD:1406210}. A real-time system is made of several real-time applications.
+\end{block}
+\begin{itemize}
+    \item A real-time application can also be viewed as a \textit{taskset} $\tau$, a static set of tasks~\cite{Davis:2011:SHR:1978802.1978814}
+    \item Tasks and therefore real-time systems can be classified according to the consequences of a deadline miss~\cite{mall2009real} into:
+	\begin{itemize}
+		\item \textit{hard}: the task has to produce a result within its deadline otherwise the whole system is considered to have failed	
+		\item \textit{firm}: the task is required to produce a result within its deadline. Eventual late results are discarded
+		\item \textit{soft}: the task has an associated deadline which, however, is not absolute but expressed as an average response time required
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real-time Operating Systems}
+In order to handle real-time systems complexity Real-time Operating Systems (RTOS) are used. RTOSs have to consider time as a key parameter~\cite{Tanenbaum:2007:MOS:1410217}.
+
+Main features are:
+\begin{itemize}
+	\item Time sharing, several scheduling algorithms:
+		\begin{itemize}
+			\item A widely adopted tecnique is \textit{partitioning}
+		\end{itemize}
+	\item (Virtual) Memory allocation
+	\item Inter-task communication
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Partitioning}
+\begin{itemize}
+	\item \textit{Static} \textit{non work-conserving} schedulers such as Time Division Multiplexing (TDM) assign applications to the processor
+	\item No runtime decisions to schedule applications means time isolation or \textit{partitioning} between applications
+	\item Two level scheduling: \textit{inter} and \textit{intra-application} schedulers
+	\item Preemptive \textit{intra-application} schedulers reach better processor utilization than non preemptive ones
+		\begin{itemize}
+			\item At the cost of more overhead
+		\end{itemize}
+	\item ARINC653~\cite{ARINC653:2003} is a standard specification for time and space partitioning in safety-critical avionics real-time operating systems
+		\begin{itemize}
+			\item Time is divided in a number of slots called partitions
+			\item Each partition is assigned an application
+			\item In each partition a second-level scheduler can be defined
+		\end{itemize}
+\end{itemize}
+		
+\end{frame}
+\end{comment}
+
+\begin{comment}
+\begin{frame}
+\frametitle{Some partitioned RTOSs (1)}
+\begin{itemize}
+	\item \textbf{PikeOS}
+		\begin{itemize}
+			\item Commercial
+			\item Supports ARINC653 standard
+			\item Two level scheduling based on virtual machines
+		\end{itemize}
+	\item \textbf{INTEGRITY}
+		\begin{itemize}
+			\item Commercial
+			\item Partitioning RTOS
+			\item Uses the MMU for high performance memory protection
+		\end{itemize}
+	\item \textbf{LynxOS-178}
+		\begin{itemize}
+			\item Commercial
+			\item Partitioning RTOS
+			\item Uses the MMU for high performance memory protection
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Some partitioned RTOSs (2)}
+\begin{itemize}
+	\item \textbf{LynxOS-178}
+		\begin{itemize}
+			\item Commercial
+			\item Time and space-partitioning through virtual machines
+			\item Supports the ARINC653 standard
+		\end{itemize}
+	\item \textbf{CompOS}
+		\begin{itemize}
+			\item Composable OS
+			\item Targes multiprocessor, each processor executes an independent instance of CompOSe
+			\item Communication API to preserve isolation
+		\end{itemize}
+\end{itemize}
+\end{frame}
+\end{comment}
+
+\begin{frame}
+\frametitle{The T-CREST Project}
+
+		\begin{figure}
+			\includegraphics[scale=.4]{figures/TCREST.jpg}
+		\end{figure}
+
+\begin{itemize}
+	\item Aims to create a time-predictable chip multi-processor
+	\item Develops processor (Patmos~\cite{patmos:ppes2011}), memories and the interconnect
+	\item Makes use of time-predictable caches to address the increased needs of processing power
+\end{itemize}
+\end{frame}
+
+\section{The Patmos Processor}
+\begin{frame}
+\frametitle{Patmos}
+
+\begin{itemize}
+	\item Reduced instruction set architecture (RISC) processor
+	\item Aims to reduce the complexity of WCET analysis
+	\item Pipeline divided in 5 stages: \texttt{FE}, \texttt{DEC}, \texttt{EX}, \texttt{MEM} and \texttt{WB}
+	\item Instruction Set Architecture (ISA) includes:
+		\begin{itemize}
+			\item Integer and binary arithmetic
+			\item Loads/Stores to local and global memory for different types of data
+			%\item Move instructions between different types of registers
+			\item Branches, calls and return 
+			\item Stack cache management instructions
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Patmos Memories (1)}
+Patmos uses several local memories:
+\begin{itemize}
+	\item Method cache~\cite{Schoeberl04atime}
+		\begin{itemize}
+			\item Idea: functions are usually short
+			\item Cache divided in blocks able to hold whole functions
+			\item Cache misses only on function calls
+		\end{itemize}
+	\item Data cache
+		\begin{itemize}
+			\item Write-through policy
+			\item Higher number of memory accesses
+			\item More analyzable WCET
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Patmos Memories (2)}
+\begin{itemize}
+	\item Stack cache~\cite{patmos:stack:seus}
+		\begin{itemize}
+			\item Holds stack allocated values
+			\item Managed by the compiler through three instructions:
+				\begin{itemize}
+					\item \texttt{reserve}: reserves space on the stack cache, may spill data
+					\item \texttt{ensure}: ensures that caller data is in the stack cache, may spill data
+					\item \texttt{free}: frees reserved space on the stack
+				\end{itemize}
+		\end{itemize}
+	\item Data scratchpad
+		\begin{itemize}
+			\item Local memory
+			\item Accesses do not stall the pipeline
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Patmos Registers}
+\begin{itemize}
+	\item \texttt{R}: 32 general-purpose registers (32 bit), \texttt{r0} is set to \texttt{0} and read-only
+	\item \texttt{S}: 16 special-purpose registers (32 bit)
+	\item \texttt{P}: 8 predicate registers (1 bit), by convention \texttt{p0} is set to true (\texttt{1})
+\end{itemize}
+Compiler convention define how to use \texttt{R}:
+\begin{itemize}
+	\item \texttt{r1} and \texttt{r2}: function's result (up to 64 bits)
+	\item \texttt{r3-r8}: function's arguments
+	\item \texttt{r27}: temporary register
+	\item \texttt{r28}: frame pointer
+	\item \texttt{r29}: shadow stack pointer
+	\item \texttt{r30}: address of the return function (function base)
+	\item \texttt{r31}: offset of the return instruction from \texttt{r30} (function offset)
+\end{itemize}
+\end{frame}
+
+\section{The TiCOS Operating System}
+\begin{frame}
+\frametitle{TiCOS}
+\begin{block}{}
+TiCOS~\cite{baldovin2012time} is a time-composable real-time operating system
+\end{block}
+\begin{itemize}
+	\item Hard real-time
+	\item Light weight
+	\item Supports ARINC653
+		\begin{itemize}
+			\item Software specification for time and space partitioning
+			\item Used in safety-critical avionics real-time operating systems
+		\end{itemize}
+	\item Originally targeted the PPC architecture
+	\item Based on POK~\cite{delange11osadlpok}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{TiCOS Architecture}
+
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.7]{figures/OS_structure.pdf}}
+		\end{center}
+		%\caption{High level structure of the OS (from~\cite{baldovin2012time})}
+		\label{OS_structure}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{TiCOS Kernel Layer}
+\begin{itemize}
+	\item Divided in \textit{arch component} and \textit{core component}
+	\item Provides several services
+		\begin{itemize}
+			\item Partitions support
+				\begin{itemize}
+					\item Each partition is a real-time application
+					\item Partitions are time and space isolated
+				\end{itemize}
+			\item Two level scheduling
+				\begin{itemize}
+					\item Cyclic scheduling of partitions (a time slot is assigned to each partition)
+					\item Constant-time (O(1)) fixed-priority scheduler between tasks in a partition
+					\item Run-to-completion semantics through delayed preemption
+				\end{itemize}
+			\item Lock objects management
+			\item Inter-partition communication management
+				\begin{itemize}
+					\item No shared memory
+					\item Using ARINC ports
+				\end{itemize}
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{comment}
+\begin{frame}
+\frametitle{ARINC653 Entities}
+\begin{itemize}
+	\item Events
+	\item Semaphores
+	\item Blackboards
+	\item Buffers
+	\item Sampling Ports
+	\item Queuing Ports
+\end{itemize}
+\end{frame}
+\end{comment}
+
+\begin{frame}
+\frametitle{TiCOS Library}
+Is made of three parts:
+\begin{itemize}
+	\item Core library
+		\begin{itemize}
+			\item Allows to access to core functionalities (like system calls)
+			\item Used by ARINC library
+			\item Non-portable applications
+		\end{itemize}
+	\item Middleware library
+		\begin{itemize}
+			\item Allows to access some of the ARINC services
+			\item Not part of the ARINC specification
+			\item Non-portable applications
+		\end{itemize}
+	\item ARINC library
+		\begin{itemize}
+			\item Allows to create and manage ARINC structures
+			\item Follows ARINC standard (portable applications)
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Processor Extensions}
+\begin{frame}
+\frametitle{RTC and Interrupts}
+\begin{block}{}
+Interrupts are used to stop the current flow of control jumping to a dedicated Interrupt Service Routine (ISR) in order to react to external events~\cite{t-crest:d5.1}
+\end{block}
+\begin{itemize}
+	\item Patmos extended with a RTC
+	\item RTC registers mapped to the local memory
+		\begin{itemize}
+			\item Clock cycles counter (64 bits)
+			\item Time in microseconds (64 bits)
+			\item Interrupt interval
+			\item ISR address
+		\end{itemize}
+	\item Interrupt interval decremented every cycle
+	\item When interrupt interval reaches 0 an interrupt is fired, program counter is stored in \texttt{s9} and ISR is called
+	\item Memory mapped RTC implemented in the Patmos simulator
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Stack Cache Manipulation}
+\begin{itemize}
+	\item Stack cache may not be consistent with memory stack
+	\item A thread's context has to contain stack cache status
+	\item Stack cache has to be spilled to main main 
+	\item Original instructions (\texttt{reserve}, \texttt{ensure} and \texttt{free}) take immediate parameters
+	\item \texttt{reserve}, \texttt{ensure} and \texttt{free} cannot spill and restore a dynamic amount of stack cache
+	\item Two new instructions are introduced:
+		\begin{itemize}
+			\item \texttt{spill} (with register parameter)
+			\item \texttt{ensure} (with register parameter)
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{TiCOS Extensions}
+\begin{frame}
+\frametitle{Porting Technique}
+Changes to the TiCOS operating system started from the architecture-dependent component up to the OS library, according to an incremental development technique:
+\begin{itemize}
+	\item Kernel's arch component
+	\item Kernel's core component
+	\item OS library
+\end{itemize}
+\end{frame}
+
+\subsection{Kernel's Arch Component}
+\begin{frame}[fragile]
+\frametitle{Clock}
+\begin{itemize}
+	\item Ways to access memory mapped RTC registers were needed
+	\item Local memory load/store instructions are used
+	\item Header file \texttt{rtc.h} containing access macros
+\end{itemize}
+
+\hspace{0.5cm}~\begin{minipage}[c]{.9\textwidth}
+\begin{lstlisting}[language=C, width=.9\textwidth, caption=\texttt{rtc.h} header file]
+#define _IODEV __attribute__((address_space(1)))
+typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
+
+//...
+
+#define __PATMOS_RTC_ISR_ADDR (0xF0000314)
+#define __PATMOS_RTC_WR_ISR(address) 
+    *((_iodev_ptr_t)__PATMOS_RTC_ISR_ADDR) = address;
+\end{lstlisting}
+\end{minipage}
+\end{frame}
+
+\begin{frame}
+\frametitle{Thread's Context}
+Patmos thread's context has to include:
+\begin{itemize}
+	\item Stack cache
+		\begin{itemize}
+			\item On a context switch the stack cache is spilled to the thread's stack memory area
+		\end{itemize}
+	\item General-purpose caller-saved (scratch) registers (\texttt{r1-r19})
+	\item General-purpose callee-saved registers (\texttt{r20-r31})
+	\item Special-purpose registers (\texttt{s0-s15})
+	\item Amount of thread's stack stored in the cache (\texttt{ssize})
+		\begin{itemize}
+			\item Needed to restore the stack cache status
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Memory Management}
+
+\begin{minipage}[c]{.35\textwidth}
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.48]{figures/memory_layout_slide.pdf}}
+		\end{center}
+		\caption{Memory layout created by the operating system}
+		\label{fig:memory layout}
+	\end{figure}
+\end{minipage}~
+\begin{minipage}[c]{.6\textwidth}
+\begin{itemize}
+	\item Patmos uses a cached stack and a shadow stack dedicated to hold aliased data
+	\item Several memory areas have to be allocated
+		\begin{itemize}
+			\item A cached stack and a shadow stack for the kernel
+			\item A cached stack and a shadow stack for each partition (\textit{main thread})
+			\item A cached stack and a shadow stack for each partition's task
+		\end{itemize}
+	\item Some memory is needed to hold thread's contexts
+	\item The memory layout is shown in figure \ref{fig:memory layout}
+\end{itemize}
+\end{minipage}
+\end{frame}
+
+\subsection{Kernel's Core Component}
+\begin{frame}
+\frametitle{Bootloader}
+
+\begin{minipage}[c]{.6\textwidth}
+\begin{itemize}
+	\item Originally partition were put in the kernel's binary
+	\item A more flexible bootloader has been developed
+		\begin{itemize}
+			\item Partitions are loaded from the \texttt{UART}
+			\item Partition's stream is expected to be formatted like in figure \ref{fig:partition stream format}
+			\item \texttt{elf2uart} utility to read an executable and stream it to the \texttt{UART}
+		\end{itemize}
+\end{itemize}
+\end{minipage}~
+\begin{minipage}[c]{.35\textwidth}
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.7]{figures/partition_stream_format.pdf}}
+		\end{center}
+		\caption{Format of the partition's stream expected by the operating system on the \texttt{UART}}
+		\label{fig:partition stream format}
+	\end{figure}
+\end{minipage}
+\end{frame}
+
+\subsection{OS Library}
+\begin{frame}
+\frametitle{System Calls Implementation}
+\begin{itemize}
+	\item Patmos has no system call instruction
+	\item No interrupt associated to system call
+	\item \texttt{system\_call} function is placed in a known memory location
+	\item To perform a system call the code jumps to \texttt{system\_call} address
+		\begin{itemize}
+			\item The required system call is identified
+			\item The proper kernel function is called
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Context Switch}
+\begin{frame}
+\frametitle{Context Switch}
+Two types of context switch:
+\begin{itemize}
+	\item Interrupt-driven context switch
+		\begin{itemize}
+			\item Interrupt interval set to expire at specified points
+			\item Used at the end of a time slot
+			\item \texttt{PC} is stored in \texttt{s9}
+		\end{itemize}
+	\item Explicit context switch
+		\begin{itemize}
+			\item Caused by the run-to-completion semantics
+			\item When a periodic task ends or an event becomes ``up'', unlocking a sporadic task
+			\item Return address computed as \texttt{r30+r31}
+		\end{itemize}
+	\item \texttt{current\_context} is a global pointer to the current executing taks's context
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Interrupt-driven Context Switch}
+
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.75]{figures/context_switch_flow.pdf}}
+		\end{center}
+		%\caption{Flow of function calls needed to perform a context switch}
+		\label{fig:context switch flow}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Explicit Context Switch}
+\begin{itemize}
+	\item Assembly function \texttt{context\_switch(uint32\_t context)} explicitly called
+	\item \texttt{context} holds the address where to store the current context
+	\item \texttt{current\_context} holds the context to restore
+	\item Context switch is handled through two functions:
+		\begin{itemize}
+			\item \texttt{context\_switch}: stores the context to \texttt{context}
+			\item \texttt{restore\_context}
+		\end{itemize}
+	\item When \texttt{context\_switch} is called the next taks has already been choosen
+\end{itemize}
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}
+\frametitle{Contributions}
+\begin{itemize}
+	\item Porting TiCOS operating system to the Patmos processor
+	\item Identifying needed extensions to the Patmos processor
+	\item Adding an OS to the T-CREST time-predictable platform made of processor and compiler
+	\item Identifying and solving bugs in the Patmos simulator and compiler
+	\item Creating a solid starting point for future work (e.g. porting another OS)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Future Work}
+\begin{itemize}
+	\item Extend the OS to multi-processors
+	\begin{itemize}
+		\item Starting from independent instances of the OS on each processor
+	\end{itemize}
+	\item Test the OS on the hardware (as soon as it's ready)
+	\item Measure OS performances on the hardware
+	\item Compare functionalities and performances with other OS (as soon as they're ready)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+		\tiny
+        \frametitle{References}
+		\bibliographystyle{plain}
+		\bibliography{References}
+\end{frame}
+
+
+
+\end{document}
+

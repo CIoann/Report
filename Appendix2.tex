@@ -1,0 +1,119 @@
+\chapter{ELF File Structure}
+
+The Executable and Linking Format (\texttt{ELF}), defined in~\cite{ELF:1995}, is a standard file format used for executable files, object files and shared libraries. ELF is meant to be extensible and portable in order to make compilation and reuse of compiled code easier. ELF file format is adopted by different operating systems since it is flexible and not tied up to a particular architecture. ELF can be used to define three main types of files:
+\begin{itemize}
+	\item \textbf{relocatable file}: can be used to build an executable file or a shared object file, contain code and data
+	\item \textbf{executable file}: contain a program and can be executed
+	\item \textbf{shared object file}: is suited for compilation with relocatable files to build other shared objects or with other shared objects to build executable files
+\end{itemize}
+
+\section{File Structure}
+
+What emerges from the ELF file types is that an object file can both be used in the linking process and in the execution itself. The same file offers different views on the data it contains in order to satisfy these requirements (as shown in figure \ref{fig:ELF file structure}).
+
+	\begin{figure}[!ht]
+        \centering
+        \begin{subfigure}[b]{0.35\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/ELF_file_structure_link.pdf}
+		\caption{Linker perspective}
+        \end{subfigure}%
+		~\hspace{2cm}
+        \begin{subfigure}[b]{0.35\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/ELF_file_structure_ex.pdf}
+		\caption{Execution perspective}
+		
+        \end{subfigure}%	
+		\caption{ELF file structure}
+		\label{fig:ELF file structure}		
+	\end{figure}
+
+\subsection{ELF Header}
+
+The ELF header contains general information about the file that can be summarized as follows:
+
+\begin{itemize}
+	\item \texttt{e\_indent}: the first bytes are used to identify an object file
+	\item \texttt{e\_type}: the type of the file, main types are: \texttt{ET\_REL} (relocatable file), \texttt{ET\_EXEC} (executable file) and \texttt{ET\_DYN} (shared object file)
+	\item \texttt{e\_machine}: the architecture of the file
+	\item \texttt{e\_version}: version of the object file
+	\item \texttt{e\_entry}: address of the entry point of the executable, if an entry point is specified
+	\item \texttt{e\_phoff}: offset in bytes of the program header table in the file
+	\item \texttt{e\_shoff}: offset in bytes of the section header table in the file
+	\item \texttt{e\_flags}: processor-specific flags
+	\item \texttt{e\_ehsize}: size of ELF header
+	\item \texttt{e\_phentsize}: size of an entry in the program's header table
+	\item \texttt{e\_phnum}: number of entries in the program's header table
+	\item \texttt{e\_shnum}: number of entries in the section's header table
+\end{itemize}
+
+\subsection{Program Header}
+
+A program header table describes how to create a program from an ELF file and is needed only for executable and shared object file. A program header table is a collection of program headers each of which describes an object segment, a collection of sections.\\
+A program header is a data structure made of the following fields:
+
+\begin{itemize}
+	\item \texttt{p\_type}: type of the segment, main values are:
+		\begin{itemize}
+			\item \texttt{PT\_NULL}: unused segment
+			\item \texttt{PT\_LOAD}: loadable segment
+			\item \texttt{PT\_DYNAMIC}: dynamic linking information
+		\end{itemize}
+	\item \texttt{p\_offset}: offset from the beginning of the file for the segment
+	\item \texttt{p\_vaddr}: virtual address where the segment is located in memory
+	\item \texttt{p\_addr}: physical address where the segment is located in memory
+	\item \texttt{p\_filesz}: number of bytes of the segment in the file
+	\item \texttt{p\_memsz}: number of bytes of the segment in memory
+	\item \texttt{p\_flags}: flags for the segment
+	\item \texttt{p\_align}: alignment of the segment in the file and memory, integer number (power of 2) in bytes
+\end{itemize}
+
+\subsection{Section Header}
+
+The section header table is mandatory only for ELF files used in the linking process. Section header table contains an entry for each section in the file. Section entries contain information regarding the section like name or size.\\
+All the information contained in an ELF file is divided in section, apart from ELF header, program header table and section header table.\\
+An ELF sections have to meet the following requirements:
+\begin{itemize} 
+	\item A section must have a section header
+	\item A section is hold by contiguous bytes in the file
+	\item Sections do not overlap
+	\item Sections may not cover all the data in the file (inactive data)
+\end{itemize}
+
+The fields contained in a section header are the following:
+
+\begin{itemize}
+	\item \texttt{sh\_name}: name of the section
+	\item \texttt{sh\_type}: type of the section, describes its content
+	\item \texttt{sh\_flags}: collection of 1 bit flags for the section
+	\item \texttt{sh\_addr}: if the section will be loaded in memory this field contains the address of the first byte of the section in memory
+	\item \texttt{sh\_offset}: the offset in byte of the first byte of the section from the beginning of the file
+	\item \texttt{sh\_size}: section's size in byte
+	\item \texttt{sh\_link}: section header index to link information for the section
+	\item \texttt{sh\_info}: extra information about the section
+	\item \texttt{sh\_addralign}: special information about alignment, may be needed by some sections
+	\item \texttt{sh\_entsize}: for sections that hold a table structure this field defined the entry size
+\end{itemize}
+
+\subsubsection{Pre-defined Sections}
+
+Some sections in an header file are pre-defined containing program and control information used by the operating system.\\
+When creating an executable more object files are put together in the linking phase, the linker resolves references between object files, updates absolute references and relocates instructions. In order to do this job some extra information is needed, this information is contained in sections like \texttt{.dynamic}.\\
+Pre-defined sections have reserved names beginning with a \texttt{.}, they can be:
+
+\begin{itemize}
+	\item \texttt{.bss}: holds uninitialized data and is loaded into memory and set to 0
+	\item \texttt{.comment}: holds version control information
+	\item \texttt{.data} and \texttt{.data1}: holds initialized data loaded into memory
+	\item \texttt{.debug}: holds content for symbolic debugging purpose
+	\item \texttt{.dynamic}: contains information for dynamic linking
+	\item \texttt{.hash}: hash table of symbols
+	\item \texttt{.line}: contains line numbering information for symbolic debugging
+	\item \texttt{.note}: holds special information eventually put by vendors 
+	\item \texttt{.rodata} and \texttt{.rodata1}: holds read-only values used to build the memory image of the process (non-writable data)
+	\item \texttt{.shstrtab}: contains section names data
+	\item \texttt{.strtab}: contains string data, usually symbols names
+	\item \texttt{.symtab}: symbol table
+	\item \texttt{.text}: the program's instructions
+\end{itemize}

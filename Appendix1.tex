@@ -1,0 +1,60 @@
+\chapter{Software Simulator of Patmos}\label{Software simulator of Patmos}
+
+The Patmos simulator~\cite{t-crest:d2.1} is a C++ implementation made of classes and interfaces representing processor's component and is designed to be modular and extensible. A class diagram for the Patmos simulator can be seen in figure \ref{fig:patmos_simulator}.
+
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.8]{figures/patmos_simulator.pdf}}
+		\end{center}
+		\caption{Class diagram for the Patmos software simulator}
+		\label{fig:patmos_simulator}
+	\end{figure}
+
+
+\texttt{simulator\_t} is the main class of the simulator and controls the whole simulation. This main class must be connected to the components of the processor and so we have:
+
+\begin{itemize}
+	\item \texttt{decoder\_t}: is the component responsible for the instruction decode. The decoder translates ISA instruction and translates them to simulator instructions.
+	\item \texttt{memory\_t}: abstract class for the memory, specifies a general behavior a memory should expose such as read and write operations. This abstract class is implemented by two other classes: \texttt{ideal\_memory\_t} and \texttt{fixed\_delay\_memory\_t}. The simulator uses this class to reference both processor's global and local memory.
+	\item \texttt{register\_file\_t}: template class which offers methods for getting and setting each register in a group of registers. Allows to implement predicate register (\texttt{PGR}), general purpose registers (\texttt{GPR}) e special purpose registers (\texttt{SPR}).
+	\item \texttt{data\_cache\_t}: another abstract class extending \texttt{memory\_t}, is the root of a hierarchy made of two other subclasses: \texttt{ideal\_data\_cache\_t} and \texttt{lru\_data\_cache\_t}. Both those classes implement a type of data cache so both wrap an other memory object to cache.
+	\item \texttt{stack\_cache\_t}: another abstract class extending \texttt{memory\_t}, is the root of a hierarchy made of two other subclasses: \texttt{ideal\_stack\_cache\_t} and \texttt{block\_stack\_cache\_t}. Both those classes implement a type of stack cache and both wrap the global memory.
+\end{itemize}
+
+\texttt{instruction\_t} is another important class which wraps the concept of a processor instruction. The class offers a method for each pipeline stage (\IF, \DR, \EX, \MW) which actually executes the corresponding pipeline stage. \texttt{instruction\_data\_t} class wraps an instruction and its operands. The simulator pipeline is nothing more than a bidimensional array of \texttt{NUM\_STAGES x NUM\_SLOTS} of \texttt{instruction\allowbreak\_data\_t} objects, where \texttt{NUM\_STAGES} is the number of processor pipeline's stages and \texttt{NUM\_SLOTS} is the number of slots in each bundle.\\
+
+The simulation is handled by a loop in the \texttt{simulator\_t} class. At each iteration a CPU cycle is executed and the following operations are performed:
+
+\begin{enumerate}
+	\item The next \texttt{NUM\_SLOTS} is decoded and the program counter is incremented (only if the \texttt{IF} pipeline stage is not stalled).
+	\item For each instruction in the pipeline the method corresponding to the stage where the instruction is placed is executed.
+	\item Each instruction is advanced to the next pipeline stage. In case some stage is stalled only a subset of those instructions are advanced.
+	\item Memory and cache state is advanced.
+\end{enumerate}
+
+\section{Instruction Simulation}
+
+The class \texttt{instruction\_t} is the root of a hierarchy of classes implementing each a processor instruction, this hierarchy is shown in figure \ref{instruction_hierarchy} and allows to reuse implementations common to group of instructions.
+
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.6]{figures/instruction_hierarchy.pdf}}
+		\end{center}
+		\caption{Class diagram for simulator's instructions hierarchy}
+		\label{instruction_hierarchy}
+	\end{figure}
+
+\section{Memory and Cache Simulation}
+
+Memories, caches and memory mapped devices can be accessed through abstract classes which isolate from their actual implementation. The abstract class \texttt{memory\_t} is extended by other three abstract classes: \texttt{data\_cache\_t}, \texttt{stack\_cache\_t} and \texttt{memory\_map\_t}.
+
+	\begin{figure}[!ht]
+		\begin{center}
+		\makebox[\linewidth]{\includegraphics[scale=0.7]{figures/memory_hierarchy.pdf}}
+		\end{center}
+		\caption{Class diagram for simulator's memory hierarchy}
+		\label{memory_hierarchy}
+	\end{figure}
+
+\texttt{memory\_map\_t} extends \texttt{memory\_t} and so it offers the same interface. \texttt{memory\_map\allowbreak \_t} wraps an object of the class \texttt{memory\_t} extends its base class with a collection of \texttt{mapped\_device\_t} and offers methods to add object of this type to that collection. The class \texttt{mapped\_device\_t} represents a portion of memory which corresponds to the content of the registers of a memory mapped IO device (for example an UART). When a read/write method is called for a specific address on an object of the class \texttt{memory\_map\_t} all the \texttt{mapped\_device\_t} are inspected to look for a device having a mapped register for the address, if an object is found the read/write is forwarded otherwise the wrapped \texttt{memory\_t} is accessed. In the case of Patmos simulator the \texttt{memory\_map\_t} object is wrapped around the local memory, so memory mapped devices can be accessed through local memory read/write instructions.
+

@@ -1,0 +1,44 @@
+\chapter{Conclusions}
+
+This chapter has three main purposes: summarize what I learned, point out the main contributions, and suggest possible future works.
+
+\section{Personal Knowledge}
+The skills I developed working on the project can be summarized in two main fields: \textit{technical} and \textit{methodological}.\\
+From a \textit{technical} point of view I learned several things in the different stages of the project:
+
+\begin{itemize}
+	\item Studying the T-CREST architecture I understood the problems arising from the development of a time-predictable multi-core architecture and several valuable solutions for solving them
+	\item Studying the original operating system I figured out what an OS requires from the underlying hardware and what a RTOS has to implement in order to support hard real-time tasks
+	\item Developing the OS I learned Patmos assembly programming and I got in touch with advanced features of the C programming language and compiler
+\end{itemize}
+
+From a \textit{methodological} perspective I learned how to work in a research project. Patmos processor, simulator and compiler are research work and therefore they are always changing and evolving. I learned how important is knowing what the people you work with are doing in order not to waste time. Moreover I learned how talking to other people in the research group helps to spread the knowledge and to see problems from different perspectives, which make them easier to be solved.
+
+\section{Main Contributions}
+
+The project work resulted in two main contributions:
+\begin{itemize}
+	\item \os operating system has been ported to the Patmos processor
+	\item The Patmos processor, simulator and compiler are research works, part of the T-CREST project. As research projects they are continuously evolving. The development of an operating system for the Patmos processor allowed to identify missing requirements for the architecture (detailed in chapter \ref{Processor extensions}) in order to support more complex computational models. Moreover the development itself started internal discussions on other possible extensions of the processor, such as ways of implementing interrupts and memory protection
+	\item The T-CREST mission is to build a time-predictable multi-processor system able to simplify the analysis and guarantee better performances~\cite{t-crest:d8.2}. In order to create such a system, hardware, simulator and compiler have been developed and studied. An operating system for Patmos takes T-CREST a step further in the direction of a multi-processor, time-predictable and easily-analyzable platform made of hardware, compiler, OS and libraries
+\end{itemize}
+
+Other minor contributions follow:
+
+\begin{itemize}
+	\item A considerable amount of code used for testing T-CREST simulator and compiler has been developed, resulting in the identification and resolution of several bugs
+	\item Even if not fulfilling all the T-CREST's requirements, the operating system's implementation is a solid starting point for further extensions and research works
+\end{itemize}
+
+\section{Suggested Future Works}
+
+More work could be made both extending the operating system's functionalities and testing them.
+
+\begin{itemize}
+	\item As previously stated, T-CREST's aim is to create a multi-processor system. The developed operating system targets a single Patmos processor. A future extension could be making the operative system support multi-processors. As a starting point an approach similar to the one adopted by CompOSe could be used: having a different and independent instance of the OS running on each processor~\cite{Hansson:2011:DIO:1945082.1945194}
+	\item As soon as the hardware is extended with RTC and interrupts features presented in Section \ref{Processor extensions}, the operating system should be tested on it in order to evaluate its performances. Particular attention should be paid to context switching delay times in order to analyze the influence of stack cache spill and restore operations
+\end{itemize}
+
+As stated before, the hardware was not completely ready to support the execution of the OS and this is the reason why OS performances have not been measured and no functional evaluation has been performed. Moreover, Patmos is a notably innovative architecture, the developed software is the first example of operating system running on the Patmos processor. Therefore a critical comparison of performances and functionalities between the developed OS and other solutions running on the same architecture was simply impossible.\\
+Implementing the proposed extensions in the hardware and porting other operating systems to the Patmos architecture would be a  good starting point for a future evaluation of the realized OS. 
+
