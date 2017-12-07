@@ -1,0 +1,188 @@
+--> What happens if we comment out JavaTracker?
+--------------------------------------------------------------------------------
+
+What happens when we press refresh()?
+-------------------------------------
+UpdateView() 
+TrackingPlugin
+AbstractTracker
+	saveData() - insert() - commit()
+AbstractStorer implements IStorer
+Different for each one of the event types.
+Test 2: Time spend in perspectives -> increament using the merger achieved.
+ 
+--------------------------------------------------------------------------------
+=> Fully understand how save works and updates. Achieved.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+C:\Users\connie\Rabbit\C.Users.connie.Desktop.Plugin1.runtime-c2
+================================================================
+What to output?
+----------------
+TimeStamp TimeEnd Timestart duration type name description
+================================================================
+When to output?
+---------------
+On Refresh
+================================================================
+Which format to output?
+-----------------------
+CSV, XML, JSON --> Try XML first
+================================================================
+Next Step: Implement constructor of XML output
+
+================================================================
+Class to write xml files
+------------------------
+DataStore.java 
+rabbit.data.xml/src/rabbit/data/internal/xml/DataStore.java
+
+================================================================
+<<Important Decisions>>
+========================
+
+------------------------
+--> Discrete Events - CommandEvent
+------------------------
+	Type 1:
+	-------
+		-- Command A -- TimeStamp --
+		-- Command B -- TimeStamp --
+		-- Command C -- TimeStamp --
+		-- Command A -- TimeStamp --
+=============================================================
+<commandEvent 
+	commandId="org.eclipse.jdt.ui.edit.text.java.toggle.comment"
+	tsStart="2017-11-12 12:04:42.402" 
+	count="1"
+/>
+==============================================================
+
+------------------------
+--> Continuous Events - FileEvent
+------------------------
+	Type 1:
+	-------
+		-- FileName A - TimeStart - TimeEnd  - Duration
+		-- Filename B - Timestart - TimeEnd  - Duration
+	ex  -- Filename C - 14:05:03  - 15:06:07 - 5 min
+
+==============================================================	
+<fileEvent 
+	filePath="/Shiploading/src/Key.java" 
+	tsStart="2017-11-12 12:00:13.103" 
+	tsEnd="2017-11-12 12:00:15.05" 
+	duration="1947"
+/>
+==============================================================
+
+------------------------
+--> Continuous Events - TaskEvent
+------------------------
+	Type 1:
+	-------
+		-- Filename A -- TimeStart - TimeEnd - Duration - TaskID - TaskCreationDate
+		-- Filename B -- TimeStart - TimeEnd - Duration - TaskID - TaskCreationDate
+		
+------------------------
+--> Continuous Events - SessionEvent - I don't get what is a new session but added timestamps anw
+------------------------
+	Type 1:
+	-------
+		-- TimeStart - TimeEnd - Duration 
+
+------------------------
+--> Continuous Events - PerspectiveEvent
+------------------------
+	Type 1:
+	-------
+		-- TimeStart - TimeEnd - Duration 
+		
+==============================================================
+<perspectiveEvent 
+	perspectiveId="org.eclipse.jdt.ui.JavaPerspective" 
+	tsStart="2017-11-12 11:57:53.21" 
+	tsEnd="2017-11-12 13:20:12.776" 
+	duration="651199"
+/>
+==============================================================
+
+------------------------
+--> Continuous Events - LaunchEvent
+------------------------
+	Type 1:
+	-------
+		-- TimeStart - TimeEnd - Duration 
+==============================================================
+<launchEvent 
+	name="ShipLoading" launchModeId="coverage" 
+	launchTypeId="org.eclipse.jdt.launching.localJavaApplication" 
+	totalDuration="2028" 
+	tsStart="2017-11-12 12:01:50.065" 
+	tsEnd="2017-11-12 12:03:37.547" 
+	count="3"
+/>
+==============================================================
+------------------------
+--> Continuous Events - JavaEvent
+------------------------
+	Type 1:
+	-------
+		-- TimeStart - TimeEnd - Duration 
+
+==============================================================
+<javaEvent 
+	handleIdentifier="=java/&lt;{HelloWorld.java[HelloWorld" 
+	tsStart="1970-01-01 01:00:00.0" 
+	tsEnd="1970-01-01 01:00:00.0" 
+	duration="15419"
+/>
+==============================================================
+------------------------
+--> Continuous Events - PartEvent
+------------------------
+	Type 1:
+	-------
+		-- TimeStart - TimeEnd - Duration 
+
+==============================================================
+<partEvent 
+	partId="org.eclipse.ui.internal.introview" 
+	tsStart="2017-11-12 19:09:42.844" 
+	tsEnd="2017-11-12 19:10:09.672" 
+	duration="26828"
+/>
+==============================================================
+==============================================================
+
+Disco - process mining tool - dtu lisence
+connect with another plugin itrace.
+how can we combine the information from both plugins
+print the grades 
+==============================================================
+==============================================================
+Allow multiple entries DONE
+---------------------------
+
+--- Optional add a smart feature to recognise if command or 
+exchange between views was spam?
+
+Can we collect more information from the ide DONE
+-------------------------------------------------
+--> Recognise frustration between exchanging
+--> Change the system to hold info together commands for a specific file.
+--> Gather information for perspectives properties would that be helpful
+--> Gather information from a file how many errors/warnings/ ++ a file has
+
+==============================================================
+==============================================================
+Time ordered sequences 
+log messages to represent inactivity? 
+aggregate repetition of edit messages into a single edit messagesaggragate repetitive move cursor messages within the editor messages into a single move cursor messages
+--- 
+1. do not record, clicking/editing moving around inside a file it creates too much noise for the actual events to be identified.
+2. Rapid exchange between views can be considered as noise. 
+3. 
+================================================================
+How do we define activities? 
