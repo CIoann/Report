@@ -1,0 +1,44 @@
+\documentclass[11pt,oneside]{article}
+
+\usepackage{lipsum}                     
+\usepackage{xargs}  
+
+\usepackage[pdftex,dvipsnames]{xcolor} 
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{eurosym}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{multirow}
+
+\usepackage[inline]{enumitem}
+
+% remember to add references
+\newcommandx{\addref}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+% important aspects to be included for report my notes from lectures
+\newcommandx{\imp}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+% things we need to discuss.
+\newcommandx{\discuss}[2][1=]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,#1]{#2}}
+
+\setlength{\parindent}{0pt}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+\begin{document}
+
+
+\input{frontpage}
+
+\include{sections/intro}
+
+
+\end{document}
