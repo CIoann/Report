@@ -1,0 +1,90 @@
+\ifglsentryexists{pde}{}%
+{%
+\gls@defglossaryentry{pde}%
+{%
+name={PDE},%
+sort={PDE},%
+type={acronym},%
+first={Plug-in Developer Environment\glsspace (PDE)},%
+firstplural={Plug-in Developer Environments\glsspace (PDEs)},%
+text={PDE},%
+plural={PDEs},%
+description={Plug-in Developer Environment},%
+descriptionplural={Plug-in Developer Environment\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Plug-in Developer Environment},%
+longplural={Plug-in Developer Environments},%
+short={PDE},%
+shortplural={PDEs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{rsse}{}%
+{%
+\gls@defglossaryentry{rsse}%
+{%
+name={RSSE},%
+sort={RSSE},%
+type={acronym},%
+first={Recommendation System in Software Engineers\glsspace (RSSE)},%
+firstplural={Recommendation System in Software Engineerss\glsspace (RSSEs)},%
+text={RSSE},%
+plural={RSSEs},%
+description={Recommendation System in Software Engineers},%
+descriptionplural={Recommendation System in Software Engineers\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Recommendation System in Software Engineers},%
+longplural={Recommendation System in Software Engineerss},%
+short={RSSE},%
+shortplural={RSSEs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{ide}{}%
+{%
+\gls@defglossaryentry{ide}%
+{%
+name={IDE},%
+sort={IDE},%
+type={acronym},%
+first={Integrated Development Environment\glsspace (IDE)},%
+firstplural={Integrated Development Environments\glsspace (IDEs)},%
+text={IDE},%
+plural={IDEs},%
+description={Integrated Development Environment},%
+descriptionplural={Integrated Development Environment\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Integrated Development Environment},%
+longplural={Integrated Development Environments},%
+short={IDE},%
+shortplural={IDEs},%
+counter={page},%
+parent={},%
+%
+}%
+}%

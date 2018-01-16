@@ -25,6 +25,7 @@
 \usepackage{epic,eepic,epsfig,graphics,psfrag}      %Figure/picture packages
 \usepackage{theorem}                                %Allows creation of custom enviroments
 
+\usepackage[acronym]{glossaries}
 %included to draw registers
 \usepackage{bytefield}
 \usepackage{colortbl}
@@ -218,22 +219,9 @@
   \bitbox[]{1}{\raisebox{0pt}[5ex][1pt]{\turnbox{45}{\fontsize{7}{7}\selectfont#1}}}
 }
 
-\newcommand{\os}{TiCOS~}
 
-\newcommand{\IF}{\texttt{IF}}
-\newcommand{\DR}{\texttt{DR}}
-\newcommand{\EX}{\texttt{EX}}
-\newcommand{\MW}{\texttt{MW}}
-
-\newcommand{\ALUr}{\texttt{ALUr}}
-\newcommand{\ALUi}{\texttt{ALUi}}
-\newcommand{\ALUl}{\texttt{ALUl}}
-\newcommand{\ALUm}{\texttt{ALUm}}
-\newcommand{\ALUc}{\texttt{ALUc}}
-\newcommand{\ALUp}{\texttt{ALUp}}
-
-\newcommand{\todo}[1]{{\emph{TODO: #1}}}
-\newcommand{\martin}[1]{{\color{blue} Martin: #1}}
-\newcommand{\marco}[1]{{\color{red} Marco: #1}}
+\newcommand{\todo}[1]{\emph{{\color{green}TODO: #1}}}
+\newcommand{\addref}[1]{{\color{blue} ADD Reference: #1}}
+\newcommand{\barbara}[1]{{\color{red} Barbara: #1}}
 
 % % % EOF % % %
